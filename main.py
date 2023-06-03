@@ -1,16 +1,30 @@
 import ffmpeg_streaming
 from ffmpeg_streaming import Formats
+import os
 
-print('Input arquivo')
-video = ffmpeg_streaming.input("/bases_video/video.mp4")
+def auto_conversion(title, origin_path, destiny_path):
+    print('Verificando caminhos...')
+    origin = os.path.expanduser(f'{origin_path}')
+    destiny = os.path.expanduser(f'{destiny_path}/')
 
-print('Configurando HLS - Instanciando ')
+    print('Criando pastas...')
 
-hls = video.hls(Formats.h264())
+    if not os.path.exists(f'{destiny}/{title}/'):
+        os.mkdir(f'{destiny}/{title}/')
 
-print('Configurando HLS - Representações')
-hls.auto_generate_representations()
+    print('Input arquivo')
+    video = ffmpeg_streaming.input(origin)
 
-print('Iniciando conversão')
+    print('Configurando HLS - Instanciando ')
 
-hls.output("./transcode_output/output.m3u8")
+    hls = video.hls(Formats.h264())
+
+    print('Configurando HLS - Representações')
+    hls.auto_generate_representations()
+
+    print('Iniciando conversão')
+
+    hls.output(f"{destiny}/{title}/output.m3u8")
+
+
+auto_conversion('eminem-mockingbird', '~/Videos/bases/eminem-mockingbird.mp4', '~/Videos/hls_videos/')
